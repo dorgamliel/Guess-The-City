@@ -1,0 +1,66 @@
+body {
+  background-image: linear-gradient(CornflowerBlue, cyan);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100% 100%;
+}
+
+.globe {
+  background-image: url("/images/earth.png");
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  animation: rotating_globe 10s infinite linear;
+  position: fixed;
+  bottom: -30%;
+  left: 30%;
+  animation-timing-function: linear;
+}
+
+@keyframes rotating_globe {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#rotation {
+  animation: rotation 2s infinite linear;
+}
+
+.menuBtn {
+  border: none;
+  color: rgb(212, 201, 201);
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  background-color: green;
+}
+
+.game-title {
+  background-color: #f1f1f1;
+  padding: 20px;
+  text-align: center;
+  font-size: 60px;
+  font-style: oblique;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+}
+
+.buttons {
+  margin-left: 50%;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
