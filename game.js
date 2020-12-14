@@ -19,7 +19,6 @@ function draw_and_fit_polygon(polygon) {
     swap_coordinates(polygon);
     //draw polygon
     var poly = L.polygon(polygon).addTo(mymap);
-    console.log("CREATED")
     //zoom
     mymap.fitBounds(poly.getBounds());
 }
@@ -80,13 +79,22 @@ surprise_button.onclick = function() {
             var city_index = Math.floor(Math.random()*cities.length+1)
             used_cities.push(city_index);
             create_city_name_button(city_index, container, cities)
-            game();
+            game(cities, used_cities, city_index);
         }
     }
 
-    function game() {
-        
+
+    function game(cities, used_cities, city_index) {
+        var city_latlng = L.latLng(cities[city_index]["geo_lat"],cities[city_index]["geo_lng"]);
+        console.log("City latlng: " + city_latlng.toString());
+        function onMapClick(e) {
+            console.log("You clicked the map at " + e.latlng.toString());
+            var distance = city_latlng.distanceTo(e.latlng);
+            console.log(distance);
+        }
+        mymap.on('click', onMapClick);
     }
+
 
     function create_city_name_button(city_index, container, cities) {
         var btn = document.createElement("button");
@@ -126,3 +134,12 @@ map_click();
 
 
 
+mymap.on('draw:created', function (e) {
+    var type = e.layerType,
+        layer = e.layer;
+        if (type === 'polygon') 
+        {
+            var area = L.GeometryUtil.geodesicArea(layer.getLatLngs())
+        }
+        console.log("AREA: " + area);
+});

@@ -30,9 +30,11 @@ body {
 
 #container {
   width: 100%;
-  height: 100%;
+  height: 25%;
   position: absolute;
   z-index: 1000;
+  background-color: white;
+  bottom: 0px;
 }
 
 .new_game_div {
