@@ -1,4 +1,4 @@
-/// CONNECTION TO MYSQL
+// / CONNECTION TO MYSQL
 // var mysql = require('mysql');
 // var con = mysql.createConnection({
 //   host: "localhost",
@@ -18,8 +18,8 @@
 //     console.log('Database not connected! : '+ JSON.stringify(err, undefined,2));
 // });
 
-///
+// /
 
 
 
-//END CONNECTION
+// END CONNECTION
