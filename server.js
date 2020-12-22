@@ -77,12 +77,42 @@ function get_iso_from_countries(res, country_name) {
   // console.log(new_coordinates);
 }
 
+function get_random_countries(res, name) {
+  var new_coordinates = "";
+    //Connection establishment
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "123123",
+    database: "around_the_world"
+  });
+    //Connection to DB.
+  con.connect(function(err) {
+    if(!err) {
+      console.log('Database is connected!');
+      var query_txt = "SELECT country_name, polygon FROM around_the_world.countries ORDER BY RAND() LIMIT 18 ;"
+      console.log("Quety txt2: " + query_txt)
+      con.query(query_txt, function (err, result, fields) {
+        console.log(result)
+        console.log(JSON.stringify(result))
+        res.write(JSON.stringify(result));
+        res.end();
+      });
+
+    } 
+  else {
+    console.log('Database not connected! : '+ JSON.stringify(err, undefined,2));
+  }
+  });
+}
+
 
 
 //Server creation.
 http.createServer(function (req, res) {
   var type = req.url.split("/")[1]
   var name = req.url.split("/")[2]
+  name = fix_spaces(name);
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.writeHead(200, {'Content-Type': 'text/html'});
   switch (type) {
@@ -92,11 +122,18 @@ http.createServer(function (req, res) {
     case "cities":
       get_cities_by_iso(res, name);
       break;
+    case "countries":
+      get_random_countries(res, name);
   }
 }).listen(8080);
 
 
 
+function fix_spaces(country_name) {
+  console.log(country_name)
+  country_name = country_name.split("_").join(" ");
+  return country_name;
+}
 
 
 
