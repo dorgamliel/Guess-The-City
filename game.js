@@ -62,7 +62,7 @@ surprise_button.onclick = function() {
             cities = JSON.parse(cities);
             container.remove();
             create_game_div();
-            game(cities, poly);
+            game(cities, poly, iso);
         }
     }
     surprise_button.remove();
@@ -98,7 +98,9 @@ function get_allowed_distance(bounds){
 }
 
 
-function game(cities, poly) {
+
+
+function game(cities, poly, iso) {
     var used_cities_cache = [];
     var flag = true
     var city_index = Math.floor(Math.random()*cities.length)
@@ -107,6 +109,12 @@ function game(cities, poly) {
             var city_latlng = L.latLng(cities[city_index]["geo_lat"],cities[city_index]["geo_lng"]);
             console.log("City latlng: " + city_latlng.toString());
             used_cities_cache.push(city_index);
+            var city_name = cities[city_index]["local_name"];
+            var name = "Zina".replaceAll(" ","$");
+            var city_name_$ = city_name.replaceAll(" ","$");
+            var tst = name+"@"+city_name_$+"@"+iso;
+            get_data_from_server("updatePlayedCity", name+"@"+city_name_$+"@"+iso);
+            // var cities_list = get_data_from_server("cityByName", name);
             city_index = Math.floor(Math.random()*cities.length);
             while (used_cities_cache.includes(city_index)) {
                 if (used_cities_cache.length == cities.length) {
@@ -115,12 +123,13 @@ function game(cities, poly) {
                 city_index = Math.floor(Math.random()*cities.length);
             }
             // create_city_name_button(city_index, container, cities)
-            document.getElementById("city_button").innerHTML = cities[city_index]["local_name"];
+            document.getElementById("city_button").innerHTML = city_name;
             console.log("You clicked the map at " + e.latlng.toString());
             var distance = city_latlng.distanceTo(e.latlng);
             console.log(poly);
             console.log(poly.getBounds());
-            allowed_dist=get_allowed_distance(poly.getBounds())
+            allowed_dist=get_allowed_distance(poly.getBounds());
+
             if (distance <= allowed_dist) {
                 show_guess_graphics("green", city_latlng, "RIGHT");
             } else {
@@ -173,6 +182,7 @@ function get_data_from_server(type, param) {
     console.log(Http.responseText);
     return Http.responseText;
 }
+
 
 ///
 

@@ -90,7 +90,74 @@ function get_random_countries(res, name) {
   con.connect(function(err) {
     if(!err) {
       console.log('Database is connected!');
-      var query_txt = "SELECT country_name, polygon FROM around_the_world.countries ORDER BY RAND() LIMIT 18 ;"
+      var query_txt = "SELECT country_name, polygon FROM around_the_world.countries ORDER BY RAND() LIMIT 6 ;"
+      console.log("Quety txt2: " + query_txt)
+      con.query(query_txt, function (err, result, fields) {
+        console.log(result)
+        console.log(JSON.stringify(result))
+        res.write(JSON.stringify(result));
+        res.end();
+      });
+
+    } 
+  else {
+    console.log('Database not connected! : '+ JSON.stringify(err, undefined,2));
+  }
+  });
+}
+
+// function post_used_city(res, name) {
+//   var new_coordinates = "";
+//     //Connection establishment
+//   var con = mysql.createConnection({
+//     host: "localhost",
+//     user: "root",
+//     password: "123123",
+//     database: "around_the_world"
+//   });
+//     //Connection to DB.
+//   con.connect(function(err) {
+//     if(!err) {
+//       console.log('Database is connected!');
+//       console.log("name: " +name);
+//       var player_name = name.split("@")[0].replace("$", " ");
+//       var guessed_city = name.split("@")[1].replace("$", " ");
+//       var query_txt = "INSERT INTO cities_by_players (player_name, city) VALUES (\""+ player_name+"\", \""+ guessed_city+"\");"
+//       console.log("Quety txt2: " + query_txt)
+//       con.query(query_txt, function (err, result, fields) {
+//         console.log(result)
+//         console.log(JSON.stringify(result))
+//         res.write(JSON.stringify(result));
+//         res.end();
+//       });
+
+//     } 
+//   else {
+//     console.log('Database not connected! : '+ JSON.stringify(err, undefined,2));
+//   }
+//   });
+// }
+
+
+function post_used_city(res, name) {
+  var new_coordinates = "";
+    //Connection establishment
+  var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "123123",
+    database: "around_the_world"
+  });
+    //Connection to DB.
+  con.connect(function(err) {
+    if(!err) {
+      console.log('Database is connected!');
+      console.log("CTname: " +name);
+      var player_name = name.split("@")[0].replace("$", " ");
+      var guessed_city = name.split("@")[1].replace("$", " ");
+      var iso = name.split("@")[2].replace("$", " ");
+      console.log("ISO: " + iso);
+      var query_txt = "INSERT INTO cities_by_players (player_name, city, iso) VALUES (\""+ player_name+"\", \""+ guessed_city+"\", \""+ iso+"\");"
       console.log("Quety txt2: " + query_txt)
       con.query(query_txt, function (err, result, fields) {
         console.log(result)
@@ -112,9 +179,12 @@ function get_random_countries(res, name) {
 http.createServer(function (req, res) {
   var type = req.url.split("/")[1]
   var name = req.url.split("/")[2]
+  console.log("name for switchcase1: " + req.url);
   name = fix_spaces(name);
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.writeHead(200, {'Content-Type': 'text/html'});
+  console.log("param for switchcase: " + type);
+  console.log("name for switchcase2: " + name);
   switch (type) {
     case "iso":
       get_iso_from_countries(res, name);
@@ -124,9 +194,16 @@ http.createServer(function (req, res) {
       break;
     case "countries":
       get_random_countries(res, name);
+      break;
+    case "updatePlayedCity":
+      post_used_city(res, name);
+      break;
+    case "cityByName":
+      // get_cities_by_name(res, name);
+      break;
+
   }
 }).listen(8080);
-
 
 
 function fix_spaces(country_name) {
