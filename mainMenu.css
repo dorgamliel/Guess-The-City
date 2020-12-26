@@ -16,6 +16,7 @@ body {
   top: 50%;
   left: 10%;
   animation: rotating_globe 20s infinite linear;
+  z-index: -1;
 }
 
 @keyframes rotating_globe {
@@ -28,16 +29,22 @@ body {
 }
 
 .menuBtn {
-  border: none;
-  color: rgb(212, 201, 201);
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
+  width: fit-content;
+  height: fit-content;
   cursor: pointer;
-  background-color: green;
+  margin: 0 auto;
+  background-color: transparent;
+  bottom: 0%;
+  margin-top: 2%;
+  font-weight: bolder;
+  font-size: 100px;
+  color: black;
+  border: none;
+  transition: all 0.2s cubic-bezier(0.42, 0, 0.58, 1);
+}
+
+.menuBtn:hover {
+  color: wheat;
 }
 
 .game-title {
@@ -50,5 +57,7 @@ body {
 }
 
 .buttons {
-  margin-left: 50%;
+  margin: auto;
+  padding: 100px;
+  text-align: center;
 }
