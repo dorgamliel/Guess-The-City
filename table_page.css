@@ -32,3 +32,9 @@ body {
 .back_button:hover {
   color: wheat;
 }
+
+table,
+th,
+td {
+  border: 1px solid black;
+}

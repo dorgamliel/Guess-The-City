@@ -107,3 +107,43 @@ body {
   font-weight: bolder;
   user-select: none;
 }
+
+#name {
+  width: 25%;
+  margin-left: 2%;
+}
+#name_txt {
+  font-size: x-large;
+  font-weight: bolder;
+  margin-left: 2%;
+}
+#submit {
+  width: 10%;
+  margin-left: 10%;
+}
+#cheat_button {
+  background-color: white;
+  border-radius: 45%;
+  border-color: black;
+  border: 10px;
+  color: black;
+  content: "HELLO";
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  z-index: 1000;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: linear 0.5s;
+}
+
+#cheat_button:hover {
+  background-color: grey;
+  color: white;
+  font-weight: bold;
+}
+#cheat_button::before {
+  content: "HINT";
+}
