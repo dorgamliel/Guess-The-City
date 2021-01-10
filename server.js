@@ -323,10 +323,11 @@ con.connect(function(err) {
     console.log("CTname: " +name);
     var player_name = replaceAll("$", " ", name.split("@")[0])
     var iso = replaceAll("$", " ", name.split("@")[1])
-    var query_txt2 = 'SELECT city_name, geo_lat, geo_lng FROM around_the_world.cities WHERE city_name NOT IN(SELECT city FROM around_the_world.cities_played_by_players WHERE player_name="'+player_name+'") AND iso="'+iso+'" ORDER BY RAND() LIMIT 1;';
+    var query_txt2 = 'SELECT city_name, geo_lat, geo_lng, id FROM around_the_world.cities WHERE id NOT IN(SELECT id FROM around_the_world.cities_played_by_players WHERE player_name="'+player_name+'") AND iso="'+iso+'" ORDER BY RAND() LIMIT 1;';
     //SET SQL_SAFE_UPDATES = 0; TODO
     con.query(query_txt2, function (err, result, fields) {
       console.log(query_txt2);
+      console.log("REsult: " + result);
       res.write(JSON.stringify(result));
       res.end();
     });

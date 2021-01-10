@@ -70,15 +70,16 @@ surprise_button.onclick = function() {
             var iso = countries[i]["country_code"];
             console.log("ISO: " + iso)
             iso = iso.replace('"', '').replace('"', '')
-            var cities = get_data_from_server("cities", iso);
+            // var cities = get_data_from_server("cities", iso);
+            var random_city = JSON.parse(get_data_from_server("get_random_city", name+"@"+iso));
             var polygon = JSON.parse("[["+countries[i]["polygon"]+"]]");
             var poly = draw_and_fit_polygon(polygon);
             remove_children(container);
-            cities = JSON.parse(cities);
+            // cities = JSON.parse(cities);
             container.remove();
             create_game_div();
             // console.log("2NAME IS: " + name);
-            game(cities, poly, iso, name);
+            game(poly, iso, name);
         }
     }
     surprise_button.remove();
@@ -100,7 +101,6 @@ function create_country_button(country_name, i) {
 }
 
 function get_allowed_distance(bounds){
-    console.log("hey")
     var bounds0 = bounds.getSouthWest();
     var bounds1 = bounds.getNorthEast();
     console.log(bounds1)
@@ -110,54 +110,37 @@ function get_allowed_distance(bounds){
     return distance/10;
 }
 
-function get_city_index(cities, used_cities_cache) {
-    city_index = Math.floor(Math.random()*cities.length);
-    while (used_cities_cache.includes(city_index)) {
-        if (used_cities_cache.length == cities.length) {
-            used_cities_cache = [];
-        }
-        city_index = Math.floor(Math.random()*cities.length);
-    }
-    used_cities_cache.push(city_index);
-    return city_index
-}
-
-function game(cities, poly, iso, username) {
-    // var score = 0;
+function game(poly, iso, username) {
     var lives = 3;
     var used_cities_cache = [];
     var flag = true;
-    // var random_city = get_data_from_server("get_random_city", username+"@"+iso);
-    var city_index = Math.floor(Math.random()*cities.length);
-    used_cities_cache.push(city_index);
-    create_city_name_button(city_index, cities);
-    var city_latlng = L.latLng(cities[city_index]["geo_lat"],cities[city_index]["geo_lng"]);
+    var random_city = JSON.parse(get_data_from_server("get_random_city", username+"@"+iso));
+    var random_city_name = random_city[0]["city_name"];
+    var random_geo_lat = random_city[0]["geo_lat"];
+    var random_geo_lng = random_city[0]["geo_lng"];
+    var random_city_id = random_city[0]["id"];
+    create_random_city_name_button(random_city_name);
+    var city_latlng = L.latLng(random_geo_lat,random_geo_lng);
     var cheat = document.createElement("button");
     cheat.id = "cheat_button";
     var message_container = document.getElementById("message_container");
     message_container.appendChild(cheat);
     cheat.onclick = function() {draw_cheat(city_latlng);}
         async function onMapClick(e) {
-            var city_latlng = L.latLng(cities[city_index]["geo_lat"],cities[city_index]["geo_lng"]);
-            var city_id = cities[city_index]["id"];
+            var city_latlng = L.latLng(random_geo_lat,random_geo_lng);
+            var city_id = random_city_id;
             console.log("CITY ID: " + city_id);
-            // console.log("City latlng: " + city_latlng.toString());
-            var city_name = cities[city_index]["city_name"];
+            var city_name = random_city_name;
             var test = document.getElementById("name");
             var name = username.replaceAll(" ","$");
             var city_name_$ = city_name.replaceAll(" ","$");
             var tst = name+"@"+city_name_$+"@"+iso;
             var guess_flag = "0";
-            // create_city_name_button(city_index, container, cities)
-            // console.log("You clicked the map at " + e.latlng.toString());
             var distance = city_latlng.distanceTo(e.latlng);
-            // console.log(poly);
-            // console.log(poly.getBounds());
             allowed_dist=get_allowed_distance(poly.getBounds());
             if (distance <= allowed_dist) {
                 show_guess_graphics("green", city_latlng, "RIGHT");
                 guess_flag = "1";
-                // score += 1;
             } else {
                 show_guess_graphics("red", city_latlng, "WRONG");
                 lives -= 1;
@@ -166,13 +149,11 @@ function game(cities, poly, iso, username) {
             console.log(lives);
             get_data_from_server("updatePlayedCity", city_id+"@"+name+"@"+guess_flag);
             if (lives == 0) {
-                // get_data_from_server("endGame", name);
                 get_data_from_server("update_cityboard", name);
                 var final_score = get_data_from_server("get_player_score", name);
                 final_score = final_score.split(":")[1].split("}")[0];
                 console.log("Final score:" + final_score);
                 get_data_from_server("clear_player_cities", name);
-                // get_data_from_server("clear_per_game_table", name);
                 get_data_from_server("update_score", name+"@"+final_score);
                 var success_msg = document.getElementById("success_message");
                 success_msg.style.color = "red";
@@ -188,13 +169,14 @@ function game(cities, poly, iso, username) {
                 console.log("TWO")
                 window.location.href = "index.html";
             }
-            city_index = get_city_index(cities, used_cities_cache);
-            var new_city_latlng = L.latLng(cities[city_index]["geo_lat"],cities[city_index]["geo_lng"]);
+            random_city = JSON.parse(get_data_from_server("get_random_city", username+"@"+iso));
+            random_city_name = random_city[0]["city_name"];
+            random_geo_lat = random_city[0]["geo_lat"];
+            random_geo_lng = random_city[0]["geo_lng"];
+            random_city_id = random_city[0]["id"];
+            var new_city_latlng = L.latLng(random_geo_lat, random_geo_lng);
             cheat.onclick = function() {draw_cheat(new_city_latlng);}
-            var city_name = cities[city_index]["city_name"];
-            var city_id = cities[city_index]["id"];
-            document.getElementById("city_button").innerHTML = city_name;
-            // console.log(distance);
+            document.getElementById("city_button").innerHTML = random_city_name;
         }
         mymap.on('click', onMapClick);
 
@@ -237,6 +219,15 @@ function create_city_name_button(city_index, cities) {
     btn.id = "city_button";
     // console.log(cities[city_index]["city_name"]);
     btn.innerHTML = cities[city_index]["city_name"];
+    city_container.appendChild(btn);
+}
+
+function create_random_city_name_button(city_name) {
+    var btn = document.createElement("button");
+    var city_container = document.getElementById("city_div");
+    btn.id = "city_button";
+    // console.log(cities[city_index]["city_name"]);
+    btn.innerHTML = city_name;
     city_container.appendChild(btn);
 }
 
